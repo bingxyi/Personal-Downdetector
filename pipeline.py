@@ -16,13 +16,14 @@ SITES = [
     "https://gemini.google.com/",
     "https://www.hackthebox.com/",
     "https://academy.hackthebox.com/"
+    # ...
     # Seção para adicionar sites personalizados !
 ]
 
 # Criando a tabela no banco de dados
 def criar_tabela():
     """Preparação do armazenamento"""
-    conn = sqlite3.connect('meu_monitor.db')
+    conn = sqlite3.connect('meu_monitor.db')    
     cursor = conn.cursor()
     cursor.execute('''
                     CREATE TABLE IF NOT EXISTS logs (
@@ -45,23 +46,25 @@ def coletar_dados():
     for site in SITES:
         try:
             inicio = time.time()
-            resposta = requests.get(site, timeout=7)
+            resposta = requests.get(site, timeout=7)    
             fim = time.time()
 
             tempo_ms = round((fim - inicio) * 1000, 2) # Cálculo para transformar seg em ms
             status = resposta.status_code
-        
+    # Lógica simples de loop em uma GET request para verificar se o site está "up" ou "down"
+
         except Exception as e:
             # Site caiu ou atualmente sem internet 
             tempo_ms = 0
             status = 0 # Erro de conexão
 
-        timestamp = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        timestamp = datetime.now().strftime("%d-%m-%Y %H:%M:%S") 
         dados_para_ingestao.append((site, status, tempo_ms, timestamp))
-        print(f"Coletado: {site} | Status: {status}")
+        print(f"Coletado: {site} | Status: {status}") # Print para depuração 
             
     return dados_para_ingestao
 
+# Salvando valores no banco de dados
 def salvar_no_banco(dados):
     """Etapa 2: Ingestão (ingestion) e Etapa 3: Armazenamento (storage)"""
     conn = sqlite3.connect('meu_monitor.db')
@@ -69,7 +72,7 @@ def salvar_no_banco(dados):
     cursor.executemany('''
                         INSERT INTO logs (url, status_code, tempo_resposta, data_hora) 
                        VALUES (?, ?, ?, ?)
-                        ''', dados)
+                        ''', dados) # Atribuindo valores
     conn.commit()
     conn.close()
 

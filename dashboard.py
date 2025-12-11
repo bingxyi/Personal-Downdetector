@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 # O Dashboard (Transformação -> Disponibilização)
 ## ---------------------------------------------------------------
 
-# Configuração da página
+# Configuração da página (streamlit)
 st.set_page_config(page_title="Personal Downdetector", layout="wide")
 st.title("My Personal Downdetector 📉")
 
@@ -98,7 +98,7 @@ if not df.empty:
             color="url",
             height=600  
         )
-
+        
         st.subheader("Raw Data")
         st.dataframe(df_filtrado)
     else:
